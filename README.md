@@ -1,1 +1,173 @@
 # donde-nace-el-legado
+donde-nace-el-legado/
+│── package.json
+│── next.config.js
+│── postcss.config.js
+│── tailwind.config.js
+│── pages/
+│   │── index.js
+│   │── proyecto/
+│       │── [id].js
+│── components/
+│   │── Navbar.js
+│   │── Footer.js
+│   │── GridSelector.js
+│── styles/
+│   │── globals.css
+{
+  "name": "donde-nace-el-legado",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "3.3.3",
+    "postcss": "8.4.27",
+    "autoprefixer": "10.4.14"
+  }
+}
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true
+}
+module.exports = nextConfig
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+module.exports = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}"
+  ],
+  theme: {
+    extend: {
+      colors: {
+        bosque: "#1b4332",
+        verdeClaro: "#95d5b2"
+      }
+    },
+  },
+  plugins: [],
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-white text-gray-800 font-sans;
+}
+export default function Navbar() {
+  return (
+    <nav className="bg-bosque text-white p-4 flex justify-between items-center">
+      <h1 className="text-xl font-bold">Donde Nace el Legado</h1>
+      <div className="space-x-4">
+        <a href="/" className="hover:underline">Inicio</a>
+        <a href="/proyecto/1" className="hover:underline">Proyectos</a>
+      </div>
+    </nav>
+  )
+}
+export default function Footer() {
+  return (
+    <footer className="bg-gray-900 text-white text-center p-4 mt-10">
+      <p>© 2025 Donde Nace el Legado – Todos los derechos reservados</p>
+    </footer>
+  )
+}
+import { useState } from "react"
+
+export default function GridSelector({ filas = 10, columnas = 10 }) {
+  const [seleccionados, setSeleccionados] = useState([])
+
+  const toggleCelda = (id) => {
+    setSeleccionados(prev =>
+      prev.includes(id)
+        ? prev.filter(c => c !== id)
+        : [...prev, id]
+    )
+  }
+
+  return (
+    <div>
+      <div className="grid grid-cols-10 gap-1">
+        {Array.from({ length: filas * columnas }).map((_, i) => {
+          const id = i + 1
+          const activo = seleccionados.includes(id)
+          return (
+            <div
+              key={id}
+              onClick={() => toggleCelda(id)}
+              className={`w-8 h-8 border rounded cursor-pointer 
+                ${activo ? "bg-verdeClaro" : "bg-gray-200 hover:bg-gray-300"}`}
+            />
+          )
+        })}
+      </div>
+      <p className="mt-4">Has seleccionado: {seleccionados.length} m²</p>
+    </div>
+  )
+}
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
+
+export default function Home() {
+  return (
+    <div>
+      <Navbar />
+      <main className="min-h-screen flex flex-col items-center justify-center text-center px-4">
+        <h1 className="text-4xl font-bold text-bosque mb-4">
+          El lugar donde tu historia se hace bosque
+        </h1>
+        <p className="max-w-xl text-lg text-gray-600 mb-6">
+          Conserva simbólicamente un metro cuadrado de bosque patagónico y deja tu legado en la naturaleza.
+        </p>
+        <a
+          href="/proyecto/1"
+          className="px-6 py-3 bg-bosque text-white rounded-xl hover:bg-green-900 transition"
+        >
+          Explorar Proyectos
+        </a>
+      </main>
+      <Footer />
+    </div>
+  )
+}
+import { useRouter } from "next/router"
+import Navbar from "../../components/Navbar"
+import Footer from "../../components/Footer"
+import GridSelector from "../../components/GridSelector"
+
+export default function Proyecto() {
+  const { query } = useRouter()
+  const { id } = query
+
+  return (
+    <div>
+      <Navbar />
+      <main className="min-h-screen px-6 py-10">
+        <h1 className="text-3xl font-bold text-bosque mb-4">
+          Proyecto {id}: Bosque en la Patagonia
+        </h1>
+        <p className="mb-6 text-gray-700">
+          Aquí puedes elegir tu metro cuadrado en la cuadrícula simbólica del proyecto.
+        </p>
+        <GridSelector filas={10} columnas={10} />
+        <div className="mt-6">
+          <button className="px-6 py-3 bg-bosque text-white rounded-lg hover:bg-green-900 transition">
+            Continuar al Pago
+          </button>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  )
+}
