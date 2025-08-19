@@ -1,20 +1,9 @@
 # donde-nace-el-legado
-donde-nace-el-legado/
-│── package.json
-│── next.config.js
-│── postcss.config.js
-│── tailwind.config.js
-│── pages/
-│   │── index.js
-│   │── proyecto/
-│       │── [id].js
-│── components/
-│   │── Navbar.js
-│   │── Footer.js
-│   │── GridSelector.js
-│── styles/
-│   │── globals.css
-{
+const fs = require("fs");
+const path = require("path");
+
+const files = {
+  "package.json": `{
   "name": "donde-nace-el-legado",
   "version": "1.0.0",
   "private": true,
@@ -32,18 +21,18 @@ donde-nace-el-legado/
     "autoprefixer": "10.4.14"
   }
 }
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true
-}
+`,
+  "next.config.js": `const nextConfig = { reactStrictMode: true }
 module.exports = nextConfig
-module.exports = {
+`,
+  "postcss.config.js": `module.exports = {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
 }
-module.exports = {
+`,
+  "tailwind.config.js": `module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}"
@@ -58,14 +47,16 @@ module.exports = {
   },
   plugins: [],
 }
-@tailwind base;
+`,
+  "styles/globals.css": `@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
   @apply bg-white text-gray-800 font-sans;
 }
-export default function Navbar() {
+`,
+  "components/Navbar.js": `export default function Navbar() {
   return (
     <nav className="bg-bosque text-white p-4 flex justify-between items-center">
       <h1 className="text-xl font-bold">Donde Nace el Legado</h1>
@@ -76,14 +67,16 @@ export default function Navbar() {
     </nav>
   )
 }
-export default function Footer() {
+`,
+  "components/Footer.js": `export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white text-center p-4 mt-10">
       <p>© 2025 Donde Nace el Legado – Todos los derechos reservados</p>
     </footer>
   )
 }
-import { useState } from "react"
+`,
+  "components/GridSelector.js": `import { useState } from "react"
 
 export default function GridSelector({ filas = 10, columnas = 10 }) {
   const [seleccionados, setSeleccionados] = useState([])
@@ -106,8 +99,7 @@ export default function GridSelector({ filas = 10, columnas = 10 }) {
             <div
               key={id}
               onClick={() => toggleCelda(id)}
-              className={`w-8 h-8 border rounded cursor-pointer 
-                ${activo ? "bg-verdeClaro" : "bg-gray-200 hover:bg-gray-300"}`}
+              className={\`w-8 h-8 border rounded cursor-pointer \${activo ? "bg-verdeClaro" : "bg-gray-200 hover:bg-gray-300"}\`}
             />
           )
         })}
@@ -116,7 +108,8 @@ export default function GridSelector({ filas = 10, columnas = 10 }) {
     </div>
   )
 }
-import Navbar from "../components/Navbar"
+`,
+  "pages/index.js": `import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 
 export default function Home() {
@@ -141,7 +134,8 @@ export default function Home() {
     </div>
   )
 }
-import { useRouter } from "next/router"
+`,
+  "pages/proyecto/[id].js": `import { useRouter } from "next/router"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 import GridSelector from "../../components/GridSelector"
@@ -171,3 +165,21 @@ export default function Proyecto() {
     </div>
   )
 }
+`
+};
+
+function writeFile(filePath, content) {
+  const dir = path.dirname(filePath);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(filePath, content);
+}
+
+const base = path.join(process.cwd(), "donde-nace-el-legado");
+
+for (const [file, content] of Object.entries(files)) {
+  const fullPath = path.join(base, file);
+  writeFile(fullPath, content);
+}
+
+console.log("✅ Proyecto creado en carpeta 'donde-nace-el-legado'");
+
